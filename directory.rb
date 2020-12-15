@@ -1,5 +1,29 @@
-def input_students
-   students = []
+def interactive_menu
+   students = [] 
+   loop do 
+       puts "Please pick one of the following options"
+       puts "1. Input the students"
+       puts "2. Show the students"
+       puts "9. Exit the program"
+       user_selection = gets.chomp
+       
+       case user_selection
+        when "1"
+           students = input_students(students)
+        when "2"
+            header
+            print(students)
+            footer(students)
+        when "9"
+            exit 
+        else 
+            puts "I do not recognise this input, please choose again"
+       end
+    end
+end
+
+
+def input_students(students)
    puts "please put the names of the students"
    puts "To finish just hit the return twice"
    name = gets.chomp
@@ -7,7 +31,7 @@ def input_students
        students << {name: name, cohort: :november}
        puts "Now we have #{students.count} students"
        name = gets.chomp
-    end
+   end
     students
 end    
 
@@ -24,10 +48,7 @@ end
 
 def footer(students)
     puts "Overall, we have #{students.count} great students"
+    puts "--------------------------------------------------"
 end
 
-students = input_students
-header
-print(students)
-footer(students)
-
+interactive_menu
