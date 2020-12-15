@@ -12,6 +12,7 @@ def print_menu
     puts "Please pick one of the following options"
        puts "1. Input the students"
        puts "2. Show the students"
+       puts "3. Save students to a csv file"
        puts "9. Exit the program" 
 end
 
@@ -22,6 +23,8 @@ def process(selection)
        @students = input_students
     when "2"
         showing_students
+    when "3"
+        save_students
     when "9"
         exit 
     else 
@@ -41,6 +44,19 @@ def input_students
    end
     @students
 end    
+
+# function for saving students to a file 
+def save_students
+    file = File.open("Students.csv", "w")
+    @students.each do |student| 
+        student_data = [student[:name], student[:cohort]]
+        csv_line = student_data.join(", ")
+        file.puts csv_line
+    end
+    file.close
+    puts "Student list saved to 'Students.csv'"
+    puts ""
+end
 
 # function fot printing the header
 def header
