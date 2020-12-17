@@ -1,11 +1,12 @@
 # form empty array for students
 @students = [] 
+@cohorts = [:January, :February, :March, :April, :May, :June, :July, :August, :September, :October, :November, :December]
 
 # function for interactive menu
 def interactive_menu
  loop do 
      print_menu
-     process(STDIN.gets.chomp)
+     user_selection(STDIN.gets.chomp)
   end
 end
 
@@ -20,12 +21,12 @@ def print_menu
 end
 
 #function for defining each selection in the menu
-def process(selection)
+def user_selection(selection)
   case selection
    when "1"
     @students = input_students
   when "2"
-    showing_students
+    student_displayer
   when "3"
     save_students
   when "4"
@@ -37,36 +38,52 @@ def process(selection)
   end
 end
 
-# function for inputting students to array
+# function for pushing individual students into the students array
+def student_array_adder(name, cohort, hobby, birth_country)
+  @students << {name: name, cohort: cohort, hobby: hobby, birth_country: birth_country}
+  return @students
+end
+
+# function for checking and inputting students from user input
 def input_students
- @cohorts = [:January, :February, :March, :April, :May, :June, :July, :August, :September, :October, :November, :December]
  puts "please put the names of the students, their cohort, their hobby and country of birth, seperated by a comma and space".center(100)
  puts "To finish just hit the return twice".center(100)
  student_info = STDIN.gets.chomp
- while !student_info.empty? do
-     student = student_info.split(", ")
-     student = cohort_assigner(student)
-     @students << {name: student[0], cohort: student[1], hobby: student[2], birth_country: student[3]}
-     student_counter
-     student_info = STDIN.gets.chomp
- end
+ # push student info into student adding loop
+ student_loop(student_info)
   @students
-end    
+end
+
+# function for student adding while loop
+def student_loop(student_info)
+  while !student_info.empty? do
+   #split student info into variables
+   name, cohort, hobby, birth_country = student_info.split(", ")
+   #check cohort
+   cohort = cohort_assigner(cohort)
+   #add student to student array
+   student_array_adder(name, cohort, hobby, birth_country)
+   #count students now
+   student_counter
+   #reset student_info to empty
+   student_info = STDIN.gets.chomp
+  end
+end  
 
 #cohort assignment
-def cohort_assigner(student)
-  if !student[1].nil? 
-      if @cohorts.include? student[1].to_sym
-         student[1] = student[1].to_sym
+def cohort_assigner(cohort)
+  if !cohort.nil? 
+      if @cohorts.include? cohort.to_sym
+         cohort = cohort.to_sym
       else 
          puts "This cohort is not available, setting the cohort to November"
-         student[1] = :November
+         cohort = :November
       end
   else 
       puts "No cohort entered, setting cohort to November"
-      student[1] = :November
+      cohort = :November
   end
-  return student
+  return cohort
 end
 
 #student counter
@@ -95,7 +112,7 @@ def load_students(filename = "Students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
     name, cohort, hobby, birth_country = line.chomp.split(', ')
-    @students << {name: name, cohort: cohort.to_sym, hobby: hobby, birth_country: birth_country}
+    student_array_adder(name, cohort, hobby, birth_country)
   end
   puts "Students loaded from #{filename}"
   file.close
@@ -103,7 +120,7 @@ end
 
 #try loading files
 def try_load_file
-  filename = ARGV.first
+  !ARGV.empty? ? (filename = ARGV.first) :  (filename = 'Students.csv')
   return if filename.nil?
   if File.exists?(filename)
     load_students(filename)
@@ -115,7 +132,7 @@ def try_load_file
 end
 
 # function fot printing the header
-def header
+def print_header
   puts "The students of Villians academy".center(100)
   puts '--------------------------------------------------'.center(100)
 end
@@ -130,7 +147,7 @@ def print_students_list
 end
 
 # function for printing the footer
-def footer
+def print_footer
   if @students.length == 0
     puts "There are currently no students in the Villians academy\n".center(100)
   else
@@ -140,10 +157,10 @@ def footer
 end
 
 # function responsible for the printing students aesthetic
-def showing_students
-  header
+def student_displayer
+  print_header
   print_students_list
-  footer
+  print_footer
 end
 
 #call methods 
