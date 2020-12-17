@@ -1,9 +1,11 @@
+# form empty array for students
+@students = [] 
+
 # function for interactive menu
 def interactive_menu
- @students = [] 
  loop do 
      print_menu
-     process(gets.chomp)
+     process(STDIN.gets.chomp)
   end
 end
 
@@ -38,15 +40,15 @@ end
 # function for inputting students to array
 def input_students
  @cohorts = [:January, :February, :March, :April, :May, :June, :July, :August, :September, :October, :November, :December]
- puts "please put the names of the students, their cohort, their height and country of birth, seperated by a comma and space".center(100)
+ puts "please put the names of the students, their cohort, their hobby and country of birth, seperated by a comma and space".center(100)
  puts "To finish just hit the return twice".center(100)
- student_info = gets.chomp
+ student_info = STDIN.gets.chomp
  while !student_info.empty? do
      student = student_info.split(", ")
      student = cohort_assigner(student)
-     @students << {name: student[0], cohort: student[1], height: student[2], birth_country: student[3]}
+     @students << {name: student[0], cohort: student[1], hobby: student[2], birth_country: student[3]}
      student_counter
-     student_info = gets.chomp
+     student_info = STDIN.gets.chomp
  end
   @students
 end    
@@ -80,7 +82,7 @@ end
 def save_students
   file = File.open("Students.csv", "w")
   @students.each do |student| 
-      student_data = [student[:name], student[:cohort], student[:height], student[:birth_country]]
+      student_data = [student[:name], student[:cohort], student[:hobby], student[:birth_country]]
       csv_line = student_data.join(", ")
       file.puts csv_line
   end
@@ -89,16 +91,28 @@ def save_students
 end
 
 #loading student file
-def load_students
-  file = File.open("Students.csv", "r")
+def load_students(filename = "Students.csv")
+  file = File.open(filename, "r")
   file.readlines.each do |line|
-    name, cohort, height, birth_country = line.chomp.split(', ')
-    @students << {name: name, cohort: cohort.to_sym, height: height, birth_country: birth_country}
+    name, cohort, hobby, birth_country = line.chomp.split(', ')
+    @students << {name: name, cohort: cohort.to_sym, hobby: hobby, birth_country: birth_country}
   end
-  puts "Students loaded from 'Students.csv'"
+  puts "Students loaded from #{filename}"
   file.close
 end
 
+#try loading files
+def try_load_file
+  filename = ARGV.first
+  return if filename.nil?
+  if File.exists?(filename)
+    load_students(filename)
+    puts "Loaded #{@students.count} from #{filename}"
+  else 
+    puts "#{filename} doesn't exist"
+    exit
+  end
+end
 
 # function fot printing the header
 def header
@@ -110,7 +124,7 @@ end
 def print_students_list
   counter = 0
   until counter == @students.length
-      puts "#{counter + 1}. #{@students[counter][:name]} (#{@students[counter][:cohort]} cohort, height: #{@students[counter][:height]}, country of birth: #{@students[counter][:birth_country]})".center(100)
+      puts "#{counter + 1}. #{@students[counter][:name]} (#{@students[counter][:cohort]} cohort, hobby: #{@students[counter][:hobby]}, country of birth: #{@students[counter][:birth_country]})".center(100)
       counter += 1
   end
 end
@@ -133,4 +147,5 @@ def showing_students
 end
 
 #call methods 
+try_load_file
 interactive_menu
