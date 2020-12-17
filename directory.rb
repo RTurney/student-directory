@@ -80,7 +80,7 @@ end
 def save_students
   file = File.open("Students.csv", "w")
   @students.each do |student| 
-      student_data = [student[:name], student[:cohort]]
+      student_data = [student[:name], student[:cohort], student[:height], student[:birth_country]]
       csv_line = student_data.join(", ")
       file.puts csv_line
   end
@@ -92,9 +92,10 @@ end
 def load_students
   file = File.open("Students.csv", "r")
   file.readlines.each do |line|
-    name, cohort = line.chomp.split(', ')
-    @students << {name: name, cohort: cohort.to_sym}
+    name, cohort, height, birth_country = line.chomp.split(', ')
+    @students << {name: name, cohort: cohort.to_sym, height: height, birth_country: birth_country}
   end
+  puts "Students loaded from 'Students.csv'"
   file.close
 end
 
