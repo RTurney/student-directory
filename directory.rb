@@ -24,14 +24,19 @@ end
 def user_selection(selection)
   case selection
    when "1"
+    puts "You have chosen to add more students\n".center(100)
     @students = input_students
   when "2"
+    puts "You have chosen to see our current student list\n".center(100)
     student_displayer
   when "3"
+    "You have save our current student list to a csv file\n".center(100)
     save_students
   when "4"
+    "You have chosen to load students from a csv file\n".center(100)
     load_students
   when "9"
+    puts "Okay bye".center(100)
     exit 
   else 
     puts "I do not recognise this input, please choose again".center(100)
